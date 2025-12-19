@@ -1,20 +1,30 @@
+"use client"
 import { OrderBook } from "./components/orderBook"
 import { OrdersPanel } from "./components/ordersPanel"
 import { marketData } from "./data/market"
+import { useMarketStore } from "./store/useMarketStore"
 
 export default function Home() {
+  const { selectedSymbol, setSelectedSymbol } = useMarketStore()
+
   return (
     <main>
-      <h1>Market Snapshot</h1>
-      <ul>
-        {marketData.map(item => (
-          <li key={item.symbol}>
-            {item.symbol} — {item.price} ({item.change}%)
-          </li>
-        ))}
-      </ul>
-      <OrderBook/>
-      <OrdersPanel/>
+      <h2>Market</h2>
+      {marketData.map(item => (
+        <div
+          key={item.symbol}
+          onClick={() => setSelectedSymbol(item.symbol)}
+          style={{
+            cursor: "pointer",
+            fontWeight:
+              selectedSymbol === item.symbol ? "bold" : "normal",
+          }}
+        >
+          {item.symbol} — {item.price}
+        </div>
+      ))}
+      <OrderBook />
+      <OrdersPanel />
     </main>
   )
 }
