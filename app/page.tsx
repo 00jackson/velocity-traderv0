@@ -1,7 +1,7 @@
 "use client"
 import { OrderBook } from "./components/orderBook"
 import { OrdersPanel } from "./components/ordersPanel"
-import { marketData } from "./data/market"
+import { marketData } from "./services/market"
 import { useMarketStore } from "./store/useMarketStore"
 
 export default function Home() {
