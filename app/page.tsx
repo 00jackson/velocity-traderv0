@@ -1,4 +1,5 @@
 import { OrderBook } from "./components/orderBook"
+import { OrdersPanel } from "./components/ordersPanel"
 import { marketData } from "./data/market"
 
 export default function Home() {
@@ -13,6 +14,7 @@ export default function Home() {
         ))}
       </ul>
       <OrderBook/>
+      <OrdersPanel/>
     </main>
   )
 }
