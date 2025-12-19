@@ -6,7 +6,7 @@ import { useMarketStore } from "./store/useMarketStore"
 import { useEffect } from "react"
 
 export default function Home() {
-  const { marketData, selectedSymbol, setSelectedSymbol, loadMarketData, isLoading } =
+  const { marketData, selectedSymbol, setSelectedSymbol, loadMarketData, isLoading, error } =
     useMarketStore()
 
   useEffect(() => {
@@ -16,6 +16,9 @@ export default function Home() {
   return (
     <main>
       <h2>Market</h2>
+  
+      {error && <div>{error}</div>}
+  
       {isLoading ? (
         <div>Loading market data...</div>
       ) : (
@@ -33,6 +36,7 @@ export default function Home() {
           </div>
         ))
       )}
+  
       <OrderBook />
       <OrdersPanel />
     </main>

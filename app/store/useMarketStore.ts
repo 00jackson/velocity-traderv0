@@ -8,6 +8,7 @@ type MarketState = {
   selectedSymbol: string
   loadMarketData: () => Promise<void>
   setSelectedSymbol: (symbol: string) => void
+  error?: string
 }
 
 export const useMarketStore = create<MarketState>((set) => ({
@@ -19,8 +20,16 @@ export const useMarketStore = create<MarketState>((set) => ({
     set({ selectedSymbol: symbol }),
 
   loadMarketData: async () => {
-    set({ isLoading: true })
-    const data = await getMarketData()
-    set({ marketData: data, isLoading: false })
-  },
+    set({ isLoading: true, error: undefined })
+    try {
+      const data = await getMarketData()
+      set({ marketData: data, isLoading: false })
+    } catch {
+      set({
+        isLoading: false,
+        error: "Failed to load market data",
+      })
+    }
+  }
+
 }))
