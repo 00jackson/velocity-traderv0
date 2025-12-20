@@ -1,3 +1,10 @@
+/**
+ * Market store guarantees:
+ * - marketData is always an array (never undefined)
+ * - loading and error states are owned here
+ * - UI never fetches data directly
+ */
+
 import { create } from "zustand"
 import { getMarketData } from "../services/market"
 import { MarketItem } from "../types/market"
@@ -24,6 +31,9 @@ export const useMarketStore = create<MarketState>((set) => ({
     try {
       const data = await getMarketData()
       set({ marketData: data, isLoading: false })
+      if (!Array.isArray(data)) {
+        throw new Error("Market data contract violated")
+      }
     } catch {
       set({
         isLoading: false,
