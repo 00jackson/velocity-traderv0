@@ -3,6 +3,7 @@ export type MarketItem = {
     symbol: string
     price: number
     change: number
+    volume: number
   }
   
   export type OrderBookLevel = {
