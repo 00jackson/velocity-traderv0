@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react"
 import { useMarketStore } from "@/store/useMarketStore"
+import type { MarketItem } from "@/types/market"
 
 export default function Home() {
   const {
@@ -12,6 +13,16 @@ export default function Home() {
     selectedSymbol,
     setSelectedSymbol,
   } = useMarketStore()
+
+
+  function isValidMarketItem(item: MarketItem) {
+    return (
+      typeof item.symbol === "string" &&
+      item.symbol.length > 0 &&
+      Number.isFinite(item.price) &&
+      typeof item.change === "number"
+    )
+  }
 
   // ✅ LOCAL FILTER STATE (inside component)
   const [minPrice, setMinPrice] = useState<number | null>(null)
@@ -25,17 +36,19 @@ export default function Home() {
 
   // ✅ DERIVED FILTERED DATA
   const filteredData = useMemo(() => {
-    return marketData.filter((item) => {
-      if (minPrice !== null && item.price < minPrice) return false
-      if (maxPrice !== null && item.price > maxPrice) return false
+    return marketData
+      .filter(isValidMarketItem) // ← USED ONCE, INTENTIONALLY
+      .filter((item) => {
+        if (minPrice !== null && item.price < minPrice) return false
+        if (maxPrice !== null && item.price > maxPrice) return false
 
-      if (direction === "up" && item.change <= 0) return false
-      if (direction === "down" && item.change >= 0) return false
+        if (direction === "up" && item.change <= 0) return false
+        if (direction === "down" && item.change >= 0) return false
 
-      if (minVolume !== null && (item.volume ?? 0) < minVolume) return false
+        if (minVolume !== null && (item.volume ?? 0) < minVolume) return false
 
-      return true
-    })
+        return true
+      })
   }, [marketData, minPrice, maxPrice, direction, minVolume])
 
   const topMovers = useMemo(() => {
