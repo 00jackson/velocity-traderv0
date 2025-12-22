@@ -9,6 +9,6 @@ export async function fetchMarketDataAPI(): Promise<MarketItem[]> {
         { symbol: "GOOG", price: 140, change: 0.4, volume: 98000 },
         // add 7+ more
       ])
-    }, 1000)
+    }, 1500)
   })
 }
