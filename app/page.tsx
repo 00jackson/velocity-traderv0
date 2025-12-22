@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useMemo } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { useMarketStore } from "@/store/useMarketStore"
 
 export default function Home() {
@@ -13,9 +13,30 @@ export default function Home() {
     setSelectedSymbol,
   } = useMarketStore()
 
+  // ✅ LOCAL FILTER STATE (inside component)
+  const [minPrice, setMinPrice] = useState<number | null>(null)
+  const [maxPrice, setMaxPrice] = useState<number | null>(null)
+  const [direction, setDirection] = useState<"all" | "up" | "down">("all")
+  const [minVolume, setMinVolume] = useState<number | null>(null)
+
   useEffect(() => {
     fetchMarketData()
   }, [fetchMarketData])
+
+  // ✅ DERIVED FILTERED DATA
+  const filteredData = useMemo(() => {
+    return marketData.filter((item) => {
+      if (minPrice !== null && item.price < minPrice) return false
+      if (maxPrice !== null && item.price > maxPrice) return false
+
+      if (direction === "up" && item.change <= 0) return false
+      if (direction === "down" && item.change >= 0) return false
+
+      if (minVolume !== null && (item.volume ?? 0) < minVolume) return false
+
+      return true
+    })
+  }, [marketData, minPrice, maxPrice, direction, minVolume])
 
   const topMovers = useMemo(() => {
     return [...marketData]
@@ -31,10 +52,15 @@ export default function Home() {
     <div>
       <h2>Selected Symbol: {selectedSymbol ?? "None"}</h2>
 
-      {marketData.map((item) => (
+      {/* RENDER FILTERED DATA */}
+      {filteredData.map((item) => (
         <div
           key={item.symbol}
           onClick={() => setSelectedSymbol(item.symbol)}
+          style={{
+            cursor: "pointer",
+            fontWeight: selectedSymbol === item.symbol ? "bold" : "normal",
+          }}
         >
           {item.symbol} — {item.price}
         </div>
@@ -44,7 +70,8 @@ export default function Home() {
       <ul>
         {topMovers.map((item) => (
           <li key={item.symbol}>
-            {item.symbol} — {item.price} ({item.change > 0 ? "+" : ""}
+            {item.symbol} — {item.price} (
+            {item.change > 0 ? "+" : ""}
             {item.change}%)
           </li>
         ))}

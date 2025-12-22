@@ -1,5 +1,5 @@
 import { orderBook } from "../data/orderBook"
-import { useMarketStore } from "../store/useMarketStore"
+import { useMarketStore } from "../../store/useMarketStore"
 
 export function OrderBook() {
     const { selectedSymbol } = useMarketStore()
